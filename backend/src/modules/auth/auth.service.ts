@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+﻿import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { SupabaseService } from '../../services/supabase.service';
@@ -27,14 +27,15 @@ export class AuthService {
 
     // Check if user already exists
     const supabase = this.supabaseService.getClient();
-    const { data: existingUser } = await supabase
+    const { data: existingUser, error: checkError } = await supabase
       .from('users')
       .select('id')
       .eq('email', email)
       .single();
 
-    if (existingUser) {
-      throw new BadRequestException('Email already registered');
+    // If no error and user exists, throw duplicate error
+    if (!checkError && existingUser) {
+      throw new BadRequestException('This email is already registered. Please login instead.');
     }
 
     // Hash password
@@ -55,7 +56,11 @@ export class AuthService {
       .single();
 
     if (error) {
-      throw new BadRequestException('Failed to create user');
+      // Check if it's a unique constraint error
+      if (error.code === '23505' || error.message.includes('duplicate')) {
+        throw new BadRequestException('This email is already registered. Please login instead.');
+      }
+      throw new BadRequestException('Failed to create user. Please try again.');
     }
 
     // Generate token

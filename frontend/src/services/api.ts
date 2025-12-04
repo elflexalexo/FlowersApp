@@ -1,9 +1,29 @@
-import axios, { AxiosInstance, AxiosError } from 'axios';
-import * as SecureStore from 'expo-secure-store';
+﻿import axios, { AxiosInstance, AxiosError } from 'axios';
 import { useAuthStore } from '../store/authStore';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 const API_TIMEOUT = parseInt(process.env.EXPO_PUBLIC_API_TIMEOUT || '30000');
+
+// Platform detection
+const isWeb = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+
+// Storage helpers
+const storage = {
+  async getItem(key: string): Promise<string | null> {
+    if (isWeb) {
+      return window.localStorage.getItem(key);
+    } else {
+      // On mobile, use expo-secure-store
+      try {
+        const SecureStore = require('expo-secure-store');
+        return await SecureStore.getItemAsync(key);
+      } catch (error) {
+        console.error('Error accessing secure store:', error);
+        return null;
+      }
+    }
+  },
+};
 
 class ApiClient {
   private client: AxiosInstance;
@@ -21,12 +41,12 @@ class ApiClient {
     this.client.interceptors.request.use(
       async (config) => {
         try {
-          const token = await SecureStore.getItemAsync('auth_token');
+          const token = await storage.getItem('auth_token');
           if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+            config.headers.Authorization = 'Bearer ' + token;
           }
         } catch (error) {
-          console.log('Error reading token from secure store:', error);
+          console.log('Error reading token from storage:', error);
         }
         return config;
       },

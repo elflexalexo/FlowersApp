@@ -1,4 +1,4 @@
-{
+﻿{
   "expo": {
     "name": "FlowersApp",
     "slug": "flowers-app",
@@ -25,11 +25,6 @@
       },
       "package": "com.flowersapp.mobile"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-secure-store"
-    ]
+    "web": {}
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useAuthStore } from '../store/authStore';
 import { authService } from '../services/authService';
@@ -12,14 +12,43 @@ export const RegisterScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const { setUser, setToken, setAuthenticated } = useAuthStore();
 
+  const getErrorMessage = (error: any): string => {
+    // Check for specific backend validation errors
+    if (error?.response?.data?.message) {
+      const msg = error.response.data.message;
+      if (msg.includes('already exists') || msg.includes('Unique constraint')) {
+        return 'This email is already registered. Please login or use a different email.';
+      }
+      if (msg.includes('validation') || msg.includes('Invalid')) {
+        return msg;
+      }
+      return msg;
+    }
+
+    // Generic error fallback
+    if (error?.response?.status === 400) {
+      return 'Registration failed. Please check your information and try again.';
+    }
+    if (error?.response?.status === 500) {
+      return 'Server error. Please try again later.';
+    }
+
+    return 'Registration failed. Please try again.';
+  };
+
   const handleRegister = async () => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Missing Information', 'Please fill in all fields');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert('Password Mismatch', 'Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Weak Password', 'Password must be at least 6 characters');
       return;
     }
 
@@ -35,7 +64,8 @@ export const RegisterScreen = ({ navigation }: any) => {
       setToken(result.accessToken);
       setAuthenticated(true);
     } catch (error: any) {
-      Alert.alert('Registration Failed', error?.response?.data?.message || 'Please try again');
+      const errorMessage = getErrorMessage(error);
+      Alert.alert('Registration Failed', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -68,6 +98,7 @@ export const RegisterScreen = ({ navigation }: any) => {
         onChangeText={setEmail}
         editable={!loading}
         keyboardType="email-address"
+        autoCapitalize="none"
       />
       
       <TextInput

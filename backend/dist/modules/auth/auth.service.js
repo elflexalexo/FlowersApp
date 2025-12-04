@@ -56,13 +56,14 @@ let AuthService = class AuthService {
         const { email, password, firstName, lastName } = registerDto;
         // Check if user already exists
         const supabase = this.supabaseService.getClient();
-        const { data: existingUser } = await supabase
+        const { data: existingUser, error: checkError } = await supabase
             .from('users')
             .select('id')
             .eq('email', email)
             .single();
-        if (existingUser) {
-            throw new common_1.BadRequestException('Email already registered');
+        // If no error and user exists, throw duplicate error
+        if (!checkError && existingUser) {
+            throw new common_1.BadRequestException('This email is already registered. Please login instead.');
         }
         // Hash password
         const passwordHash = await bcrypt.hash(password, 10);
@@ -80,7 +81,11 @@ let AuthService = class AuthService {
             .select()
             .single();
         if (error) {
-            throw new common_1.BadRequestException('Failed to create user');
+            // Check if it's a unique constraint error
+            if (error.code === '23505' || error.message.includes('duplicate')) {
+                throw new common_1.BadRequestException('This email is already registered. Please login instead.');
+            }
+            throw new common_1.BadRequestException('Failed to create user. Please try again.');
         }
         // Generate token
         const token = this.jwtService.sign({
