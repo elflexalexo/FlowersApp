@@ -8,6 +8,7 @@ export const LoginScreen = ({ navigation }: any) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [loginError, setLoginError] = useState<string | null>(null);
   const { setUser, setToken, setAuthenticated } = useAuthStore();
 
   const validateForm = (): boolean => {
@@ -74,7 +75,11 @@ export const LoginScreen = ({ navigation }: any) => {
       setAuthenticated(true);
     } catch (error: any) {
       const errorMessage = getErrorMessage(error);
-      Alert.alert('Login Failed', errorMessage);
+      // show inline error and clear password for wrong credentials
+      setLoginError(errorMessage);
+      if (error?.response?.status === 401) {
+        setPassword('');
+      }
     } finally {
       setLoading(false);
     }
@@ -93,6 +98,7 @@ export const LoginScreen = ({ navigation }: any) => {
           onChangeText={(text) => {
             setEmail(text);
             if (errors.email) setErrors({ ...errors, email: undefined });
+            if (loginError) setLoginError(null);
           }}
           editable={!loading}
           keyboardType="email-address"
@@ -110,6 +116,7 @@ export const LoginScreen = ({ navigation }: any) => {
           onChangeText={(text) => {
             setPassword(text);
             if (errors.password) setErrors({ ...errors, password: undefined });
+            if (loginError) setLoginError(null);
           }}
           secureTextEntry
           editable={!loading}
