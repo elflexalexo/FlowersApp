@@ -52,9 +52,12 @@
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "./src"
   ],
   "exclude": [
+    "**/__mocks__/*",
+    "**/__tests__/*",
     "node_modules",
     "dist",
     ".expo"

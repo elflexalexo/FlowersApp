@@ -18,6 +18,10 @@ CREATE TABLE IF NOT EXISTS users (
 -- Create index on email for faster lookups
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
+-- Add avatar URL to users so uploaded avatars can be persisted
+ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+CREATE INDEX IF NOT EXISTS idx_users_avatar_url ON users(avatar_url);
+
 -- ============================================
 -- 2. ADDRESSES TABLE
 -- ============================================

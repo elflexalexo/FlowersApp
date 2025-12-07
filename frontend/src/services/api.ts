@@ -1,7 +1,11 @@
 ﻿import axios, { AxiosInstance, AxiosError } from 'axios';
 import { useAuthStore } from '../store/authStore';
+import { Platform } from 'react-native';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+// Use emulator host for Android, localhost otherwise. This avoids needing adb reverse.
+const DEFAULT_LOCAL = 'http://localhost:3000';
+const ANDROID_EMULATOR_LOCAL = 'http://10.0.2.2:3000';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || (Platform.OS === 'android' ? ANDROID_EMULATOR_LOCAL : DEFAULT_LOCAL);
 const API_TIMEOUT = parseInt(process.env.EXPO_PUBLIC_API_TIMEOUT || '30000');
 
 // Platform detection

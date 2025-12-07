@@ -10,7 +10,7 @@ FlowersApp is a flower subscription management mobile app built with:
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick StartC
 
 ### Prerequisites
 - Node.js v18+ (download from nodejs.org)
@@ -62,31 +62,35 @@ Then:
 FlowersApp/
 ├── backend/                    # NestJS API
 │   ├── src/
-│   │   ├── modules/auth/      # Authentication
-│   │   ├── services/          # Business logic
-│   │   └── app.module.ts      # App entry
+│   │   ├── modules/auth/          # Authentication
+│   │   ├── modules/users/         # User management
+│   │   ├── modules/subscriptions/ # Subscription logic
+│   │   ├── modules/addresses/     # Delivery addresses
+│   │   ├── services/              # Business logic
+│   │   └── app.module.ts          # App entry
 │   ├── sql/
-│   │   └── 01-schema.sql      # Database schema
-│   ├── .env                   # Config (add credentials)
+│   │   └── 01-schema.sql          # Database schema
+│   ├── .env                       # Config (add credentials)
 │   └── package.json
 │
-├── frontend/                   # React Native (Expo)
+├── frontend/                      # React Native (Expo)
 │   ├── src/
-│   │   ├── screens/           # UI screens
-│   │   ├── navigation/        # Navigation logic
-│   │   ├── services/          # API calls
-│   │   ├── store/             # State management
-│   │   └── types/             # TypeScript types
-│   ├── .env                   # Config
-│   ├── App.tsx                # Entry point
+│   │   ├── screens/               # UI screens
+│   │   ├── navigation/            # Navigation logic
+│   │   ├── services/              # API calls
+│   │   ├── store/                 # State management
+│   │   ├── components/            # Reusable UI components
+│   │   ├── hooks/                 # Custom React hooks
+│   │   └── types/                 # TypeScript types
+│   ├── .env                       # Config (optional)
+│   ├── App.tsx                    # Entry point
 │   └── package.json
 │
-└── Documentation/
-    ├── README.md              # This file
-    ├── ARCHITECTURE.md        # System design
-    ├── TESTING_GUIDE.md       # How to test
-    ├── SETUP_SPRINT2.md       # Backend setup
-    └── TechnicalSpecification.md
+├── README.md                      # Project guide (this file)
+├── ARCHITECTURE.md                # System design & workflow
+├── TESTING_GUIDE.md               # How to test
+├── SETUP_SPRINT2.md               # Backend setup
+└── TechnicalSpecification.md      # Feature requirements & scope
 ```
 
 ---
@@ -288,6 +292,7 @@ npm start
 
 ## 📚 Documentation Files
 
+All documentation files are located in the project root:
 - **ARCHITECTURE.md** - System design, database schema, data flows
 - **TESTING_GUIDE.md** - Detailed testing instructions with logs
 - **SETUP_SPRINT2.md** - Backend & Supabase setup guide
@@ -317,10 +322,11 @@ npm start
 4. Connect frontend to backend
 5. Test full registration/login flow
 
+
 ### Medium Term
-6. Add Users module (profile management)
-7. Add Addresses module (delivery addresses)
-8. Add Subscriptions module (create subscriptions)
+6. Users module (profile management)
+7. Addresses module (delivery addresses)
+8. Subscriptions module (create subscriptions)
 
 ### Long Term
 9. End-to-end testing

@@ -104,6 +104,18 @@ export const authService = {
     }
   },
 
+  async updateProfile(payload: { firstName?: string; lastName?: string; phone?: string; }): Promise<User> {
+    try {
+      console.log('🔧 Updating profile...');
+      const response = await apiClient.getClient().patch<User>('/auth/profile', payload);
+      console.log('✅ Profile updated');
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Update profile error:', error?.response?.data || error?.message);
+      throw error;
+    }
+  },
+
   async logout(): Promise<void> {
     try {
       console.log('🚪 Logging out...');
@@ -128,6 +140,30 @@ export const authService = {
     } catch (error) {
       console.error('❌ Error retrieving token:', error);
       return null;
+    }
+  },
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    try {
+      console.log('🔒 Changing password...');
+      const response = await apiClient.getClient().patch('/auth/change-password', { currentPassword, newPassword });
+      console.log('✅ Password changed');
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Change password error:', error?.response?.data || error?.message);
+      throw error;
+    }
+  },
+
+  async uploadAvatar(payload: { filename: string; contentType: string; base64: string }) {
+    try {
+      console.log('📷 Uploading avatar...');
+      const response = await apiClient.getClient().post('/auth/avatar', payload);
+      console.log('✅ Avatar uploaded');
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Avatar upload error:', error?.response?.data || error?.message);
+      throw error;
     }
   },
 

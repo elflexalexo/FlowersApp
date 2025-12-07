@@ -26,6 +26,25 @@ export declare class AuthService {
         phone: any;
         createdAt: any;
     }>;
+    updateProfile(userId: string, payload: {
+        firstName?: string;
+        lastName?: string;
+        phone?: string;
+    }): Promise<{
+        id: any;
+        email: any;
+        firstName: any;
+        lastName: any;
+        phone: any;
+        createdAt: any;
+    }>;
+    changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{
+        success: boolean;
+    }>;
+    uploadAvatar(userId: string, filename: string, contentType: string, base64: string): Promise<{
+        path: string;
+        publicUrl: string | null;
+    }>;
 }
 export {};
 //# sourceMappingURL=auth.service.d.ts.map

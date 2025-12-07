@@ -122,7 +122,7 @@ backend/
 │   │                                 # - Load ConfigModule (env vars)
 │   │
 │   ├── modules/
-│   │   ├── auth/                    # Authentication (TODO)
+│   │   ├── auth/                    # Authentication
 │   │   │   ├── auth.controller.ts   # POST /auth/register, /auth/login
 │   │   │   ├── auth.service.ts      # JWT + password hashing logic
 │   │   │   ├── auth.module.ts       # Module config
@@ -133,11 +133,13 @@ backend/
 │   │   │       └── jwt.guard.ts     # Protect routes with JWT
 │   │   │
 │   │   ├── users/                   # User management (TODO)
+│   │   ├── users/                   # User management
 │   │   │   ├── users.controller.ts  # GET /users/profile, PATCH /users/profile
 │   │   │   ├── users.service.ts     # User queries
 │   │   │   └── users.module.ts
 │   │   │
 │   │   ├── subscriptions/           # Subscriptions (TODO)
+│   │   ├── subscriptions/           # Subscriptions
 │   │   │   ├── subscriptions.controller.ts
 │   │   │   ├── subscriptions.service.ts
 │   │   │   ├── subscriptions.module.ts
@@ -146,6 +148,7 @@ backend/
 │   │   │       └── update-subscription.dto.ts
 │   │   │
 │   │   └── addresses/               # Delivery addresses (TODO)
+│   │   └── addresses/               # Delivery addresses
 │   │       ├── addresses.controller.ts
 │   │       ├── addresses.service.ts
 │   │       └── addresses.module.ts
@@ -156,8 +159,14 @@ backend/
 │   │                                 # - getClientWithAuth() - RLS enforcement
 │   │
 │   ├── dto/                         # Data transfer objects (TODO)
+│   ├── dto/                         # Data transfer objects
 │   ├── guards/                      # Route protection (TODO)
+│   ├── guards/                      # Route protection
 │   └── interceptors/                # Response formatting (TODO)
+│   └── interceptors/                # Response formatting
+│   ├── hooks/                        # Custom React hooks
+│   ├── components/                   # Reusable UI components
+│   └── utils/                        # Helper functions
 ```
 
 ### Key Backend Technologies

@@ -12,6 +12,8 @@ import { RegisterScreen } from '../screens/RegisterScreen';
 // App Screens
 import { SubscriptionsListScreen } from '../screens/SubscriptionsListScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
+import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
+import HeaderMenu from '../components/HeaderMenu';
 
 const Stack = createNativeStackNavigator();
 
@@ -108,12 +110,20 @@ export const Navigation = () => {
           <Stack.Screen
             name="SubscriptionsList"
             component={SubscriptionsListScreen}
-            options={{ title: 'My Subscriptions' }}
+            options={({ navigation }) => ({
+              title: 'My Subscriptions',
+              headerRight: () => <HeaderMenu navigation={navigation} />,
+            })}
           />
           <Stack.Screen
             name="Profile"
             component={ProfileScreen}
             options={{ title: 'Profile' }}
+          />
+          <Stack.Screen
+            name="ChangePassword"
+            component={ChangePasswordScreen}
+            options={{ title: 'Change Password' }}
           />
         </Stack.Navigator>
       ) : (

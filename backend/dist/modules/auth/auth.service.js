@@ -162,6 +162,88 @@ let AuthService = class AuthService {
             createdAt: user.created_at,
         };
     }
+    async updateProfile(userId, payload) {
+        const supabase = this.supabaseService.getClient();
+        const updateObj = {};
+        if (payload.firstName !== undefined)
+            updateObj.first_name = payload.firstName;
+        if (payload.lastName !== undefined)
+            updateObj.last_name = payload.lastName;
+        if (payload.phone !== undefined)
+            updateObj.phone = payload.phone;
+        if (Object.keys(updateObj).length === 0) {
+            // Nothing to update
+            return this.getProfile(userId);
+        }
+        const { data: updated, error } = await supabase
+            .from('users')
+            .update(updateObj)
+            .eq('id', userId)
+            .select('id, email, first_name, last_name, phone, created_at')
+            .single();
+        if (error || !updated) {
+            throw new common_1.BadRequestException('Failed to update profile');
+        }
+        return {
+            id: updated.id,
+            email: updated.email,
+            firstName: updated.first_name,
+            lastName: updated.last_name,
+            phone: updated.phone,
+            createdAt: updated.created_at,
+        };
+    }
+    async changePassword(userId, currentPassword, newPassword) {
+        const supabase = this.supabaseService.getClient();
+        const { data: user, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+        if (error || !user) {
+            throw new common_1.UnauthorizedException('User not found');
+        }
+        const isValid = await bcrypt.compare(currentPassword, user.password_hash);
+        if (!isValid) {
+            throw new common_1.UnauthorizedException('Current password is incorrect');
+        }
+        const newHash = await bcrypt.hash(newPassword, 10);
+        const { data: updated, error: updateError } = await supabase
+            .from('users')
+            .update({ password_hash: newHash })
+            .eq('id', userId);
+        if (updateError) {
+            throw new common_1.BadRequestException('Failed to change password');
+        }
+        return { success: true };
+    }
+    async uploadAvatar(userId, filename, contentType, base64) {
+        const supabase = this.supabaseService.getClient();
+        // Decode base64
+        const buffer = Buffer.from(base64, 'base64');
+        const timestamp = Date.now();
+        const path = `${userId}/${timestamp}-${filename}`;
+        // Upload to Supabase Storage (bucket: avatars)
+        const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(path, buffer, { contentType, upsert: true });
+        if (uploadError) {
+            throw new common_1.BadRequestException('Failed to upload avatar');
+        }
+        // Get public URL (may depend on bucket privacy)
+        const { data: publicData } = await supabase.storage
+            .from('avatars')
+            .getPublicUrl(path);
+        const publicUrl = publicData?.publicUrl || null;
+        // Try to save avatar URL to user record (non-fatal if column absent)
+        try {
+            await supabase.from('users').update({ avatar_url: publicUrl }).eq('id', userId);
+        }
+        catch (err) {
+            // ignore
+        }
+        return { path, publicUrl };
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

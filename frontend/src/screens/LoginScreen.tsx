@@ -92,7 +92,7 @@ export const LoginScreen = ({ navigation }: any) => {
       
       <View style={styles.inputGroup}>
         <TextInput
-          style={[styles.input, errors.email && styles.inputError]}
+          style={[styles.input, errors.email ? styles.inputError : undefined]}
           placeholder="Email"
           value={email}
           onChangeText={(text) => {
@@ -110,7 +110,7 @@ export const LoginScreen = ({ navigation }: any) => {
       
       <View style={styles.inputGroup}>
         <TextInput
-          style={[styles.input, errors.password && styles.inputError]}
+          style={[styles.input, errors.password ? styles.inputError : undefined]}
           placeholder="Password"
           value={password}
           onChangeText={(text) => {
@@ -123,6 +123,7 @@ export const LoginScreen = ({ navigation }: any) => {
           placeholderTextColor="#999"
         />
         {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+        {loginError && <Text style={styles.errorText}>{loginError}</Text>}
       </View>
       
       <TouchableOpacity
