@@ -6,6 +6,8 @@ const common_1 = require("@nestjs/common");
 const supabase_service_1 = require("./services/supabase.service");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    // Debug: Print JWT secret for troubleshooting
+    console.log('JWT_SECRET:', process.env.JWT_SECRET);
     // Enable validation
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,

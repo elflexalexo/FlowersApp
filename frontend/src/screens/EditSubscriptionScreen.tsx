@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, ActivityIndicator, Alert, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAuthStore } from '../store/authStore';
-import { updateSubscription } from '../services/subscriptionService';
+import { updateSubscription, cancelSubscription, pauseOrSkipSubscription } from '../services/subscriptionService';
 
 // Props: subscription (object), onSave (function), navigation
 export default function EditSubscriptionScreen({ route, navigation }: any) {
@@ -19,6 +20,48 @@ export default function EditSubscriptionScreen({ route, navigation }: any) {
   const [apiError, setApiError] = useState<string>('');
   const [success, setSuccess] = useState(false);
   const token = useAuthStore((s) => s.token) ?? '';
+  const [pauseDate, setPauseDate] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [pauseLoading, setPauseLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const handleCancel = async () => {
+    Alert.alert(
+      'Cancel Subscription',
+      'Are you sure you want to cancel this subscription? This cannot be undone.',
+      [
+        { text: 'No', style: 'cancel' },
+        {
+          text: 'Yes',
+          style: 'destructive',
+          onPress: async () => {
+            setCancelLoading(true);
+            setApiError('');
+            try {
+              await cancelSubscription(subscription.id, token);
+              setCancelLoading(false);
+              navigation.navigate('SubscriptionsList');
+            } catch (err: any) {
+              setCancelLoading(false);
+              setApiError(err?.response?.data?.message || 'Failed to cancel subscription');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handlePause = async (date: Date) => {
+    setPauseLoading(true);
+    setApiError('');
+    try {
+      await pauseOrSkipSubscription(subscription.id, date.toISOString().slice(0, 10), token);
+      setPauseLoading(false);
+      navigation.navigate('SubscriptionsList');
+    } catch (err: any) {
+      setPauseLoading(false);
+      setApiError(err?.response?.data?.message || 'Failed to pause/skip subscription');
+    }
+  };
 
   const validate = () => {
     const newErrors: any = {};
@@ -160,7 +203,38 @@ export default function EditSubscriptionScreen({ route, navigation }: any) {
       </View>
       {errors.deliveryTimeFrom && <Text style={styles.error}>{errors.deliveryTimeFrom}</Text>}
       {errors.deliveryTimeTo && <Text style={styles.error}>{errors.deliveryTimeTo}</Text>}
-      <Button title="Save Changes" onPress={handleSave} disabled={loading} />
+      <Button title="Save Changes" onPress={handleSave} disabled={loading || pauseLoading || cancelLoading} />
+
+      <View style={{ flexDirection: 'row', marginTop: 16, width: '80%', justifyContent: 'space-between' }}>
+        <Button
+          title={pauseLoading ? 'Pausing...' : 'Pause/Skip'}
+          color="#ffb347"
+          disabled={pauseLoading || loading || cancelLoading}
+          onPress={() => setShowDatePicker(true)}
+        />
+        <Button
+          title={cancelLoading ? 'Cancelling...' : 'Cancel Subscription'}
+          color="#d00"
+          disabled={cancelLoading || loading || pauseLoading}
+          onPress={handleCancel}
+        />
+      </View>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={pauseDate || new Date()}
+          mode="date"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          minimumDate={new Date()}
+          onChange={(event, selectedDate) => {
+            setShowDatePicker(false);
+            if (selectedDate) {
+              setPauseDate(selectedDate);
+              handlePause(selectedDate);
+            }
+          }}
+        />
+      )}
     </ScrollView>
   );
 }

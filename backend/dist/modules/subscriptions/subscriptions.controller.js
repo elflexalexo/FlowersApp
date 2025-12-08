@@ -33,6 +33,14 @@ let SubscriptionsController = class SubscriptionsController {
         // Only allow update if user owns the subscription
         return this.subscriptionsService.update(id, { ...dto, userId: req.user.id });
     }
+    async cancel(id, req) {
+        // Only allow cancel if user owns the subscription
+        return this.subscriptionsService.cancel(id, req.user.id);
+    }
+    async pauseOrSkip(id, body, req) {
+        // Only allow pause/skip if user owns the subscription
+        return this.subscriptionsService.pauseOrSkip(id, req.user.id, body.nextDelivery);
+    }
 };
 exports.SubscriptionsController = SubscriptionsController;
 __decorate([
@@ -59,6 +67,23 @@ __decorate([
     __metadata("design:paramtypes", [Number, create_subscription_dto_1.CreateSubscriptionDto, Object]),
     __metadata("design:returntype", Promise)
 ], SubscriptionsController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], SubscriptionsController.prototype, "cancel", null);
+__decorate([
+    (0, common_1.Patch)(':id/pause'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object, Object]),
+    __metadata("design:returntype", Promise)
+], SubscriptionsController.prototype, "pauseOrSkip", null);
 exports.SubscriptionsController = SubscriptionsController = __decorate([
     (0, common_1.Controller)('subscriptions'),
     (0, common_2.UseGuards)(jwt_guard_1.JwtGuard),

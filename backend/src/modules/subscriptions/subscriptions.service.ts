@@ -5,40 +5,27 @@ import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 @Injectable()
 export class SubscriptionsService {
   constructor(private readonly supabaseService: SupabaseService) {}
-    id: number;
-    boxCount: number;
-    planPrice: number;
-    address: {
-      street: string;
-      city: string;
-      zip: string;
-      note?: string;
-    };
-    recipientName: string;
-    phone: string;
-    deliveryDays: string[];
-    deliveryTime: { from: string; to: string };
-    status: string;
-    nextDelivery: string;
-  }> = [
-    {
-      id: 1,
-      boxCount: 2,
-      planPrice: 40,
-      address: {
-        street: 'Prague',
-        city: 'Prag',
-        zip: '18200',
-        note: 'Im the best',
-      },
-      recipientName: 'Test User',
-      phone: '777777777',
-      deliveryDays: ['Wednesday', 'Friday'],
-      deliveryTime: { from: '09:00', to: '17:00' },
-      status: 'ACTIVE',
-      nextDelivery: '2025-12-15',
-    },
-  ];
+
+  async pauseOrSkip(id: number, userId: string, nextDelivery: string) {
+    // Only allow pause/skip if user owns the subscription
+    const client = this.supabaseService.getClient();
+    // Check ownership
+    const { data: sub, error: findError } = await client
+      .from('subscriptions')
+      .select('id, user_id')
+      .eq('id', id)
+      .single();
+    if (findError) throw new Error(findError.message);
+    if (!sub || sub.user_id !== userId) throw new Error('Unauthorized');
+    // Update status to PAUSED and set nextDelivery
+    const { data, error } = await client
+      .from('subscriptions')
+      .update({ status: 'PAUSED', nextDelivery })
+      .eq('id', id)
+      .select();
+    if (error) throw new Error(error.message);
+    return data?.[0];
+  }
 
   async create(dto: CreateSubscriptionDto) {
     // Save to Supabase
@@ -53,11 +40,12 @@ export class SubscriptionsService {
 
   async findAllForUser(userId: number) {
     // Query Supabase for user subscriptions
-    const client = this.supabaseService.getClient();
+    // Use user-context client for RLS compatibility
+    const client = this.supabaseService.getClientWithAuth(String(userId));
     const { data, error } = await client
       .from('subscriptions')
       .select('*')
-      .eq('userId', userId);
+      .eq('user_id', userId);
     if (error) throw new Error(error.message);
     return data;
   }
@@ -72,5 +60,26 @@ export class SubscriptionsService {
     if (error) throw new Error(error.message);
     if (!data?.length) throw new Error('Subscription not found');
     return data[0];
+  }
+
+  async cancel(id: number, userId: string) {
+    // Only allow cancel if user owns the subscription
+    const client = this.supabaseService.getClient();
+    // Check ownership
+    const { data: sub, error: findError } = await client
+      .from('subscriptions')
+      .select('id, user_id')
+      .eq('id', id)
+      .single();
+    if (findError) throw new Error(findError.message);
+    if (!sub || sub.user_id !== userId) throw new Error('Unauthorized');
+    // Update status to CANCELLED and update delivery schedule
+    const { data, error } = await client
+      .from('subscriptions')
+      .update({ status: 'CANCELLED', nextDelivery: null })
+      .eq('id', id)
+      .select();
+    if (error) throw new Error(error.message);
+    return data?.[0];
   }
 }

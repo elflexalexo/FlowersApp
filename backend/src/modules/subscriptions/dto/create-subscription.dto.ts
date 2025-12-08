@@ -1,3 +1,4 @@
+
 import { IsNumber, IsObject, IsString, IsOptional, IsIn, ValidateNested, IsArray, ArrayNotEmpty, IsDefined } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -25,6 +26,8 @@ class DeliveryTimeDto {
 }
 
 export class CreateSubscriptionDto {
+  @IsString()
+  userId: string;
   @IsNumber()
   boxCount: number;
 

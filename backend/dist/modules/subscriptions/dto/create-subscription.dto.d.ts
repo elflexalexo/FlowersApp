@@ -9,6 +9,7 @@ declare class DeliveryTimeDto {
     to: string;
 }
 export declare class CreateSubscriptionDto {
+    userId: string;
     boxCount: number;
     planPrice: number;
     address: AddressDto;

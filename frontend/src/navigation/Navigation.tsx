@@ -1,3 +1,4 @@
+          // ...existing code...
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -135,6 +136,16 @@ export const Navigation = () => {
             name="ChangePassword"
             component={ChangePasswordScreen}
             options={{ title: 'Change Password' }}
+          />
+          <Stack.Screen
+            name="DeliveryOverview"
+            component={require('../screens/DeliveryOverviewScreen').default}
+            options={{ title: 'Delivery Overview' }}
+          />
+          <Stack.Screen
+            name="MockPayment"
+            component={require('../screens/MockPaymentScreen').default}
+            options={{ title: 'Mock Payment' }}
           />
         </Stack.Navigator>
       ) : (

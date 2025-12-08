@@ -16,10 +16,11 @@ export const SubscriptionsListScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       <Text style={styles.title}>My Subscriptions</Text>
       {isLoading && <ActivityIndicator size="large" color="#ff6b9d" />}
-      {isError && <Text style={{ color: 'red', marginBottom: 10 }}>Failed to load subscriptions.</Text>}
-      {!isLoading && !isError && (!data || data.length === 0) && (
+      {isError ? (
+        <Text style={{ color: 'red', marginBottom: 10 }}>Failed to load subscriptions.</Text>
+      ) : (!isLoading && (!data || data.length === 0)) ? (
         <Text style={styles.subtitle}>No subscriptions yet</Text>
-      )}
+      ) : null}
       {!isLoading && !isError && data && data.length > 0 && (
         <FlatList
           data={data}
@@ -39,6 +40,12 @@ export const SubscriptionsListScreen = ({ navigation }: any) => {
               >
                 <Text style={styles.editButtonText}>Edit</Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.editButton, { backgroundColor: '#ffb347', marginTop: 6 }]}
+                onPress={() => navigation.navigate('MockPayment', { subscription: item })}
+              >
+                <Text style={[styles.editButtonText, { color: '#fff' }]}>Pay</Text>
+              </TouchableOpacity>
             </View>
           )}
         />
@@ -48,6 +55,12 @@ export const SubscriptionsListScreen = ({ navigation }: any) => {
         onPress={() => navigation.navigate('SubscriptionWizard')}
       >
         <Text style={styles.buttonText}>Add Subscription</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: '#ffb347', marginTop: 10 }]}
+        onPress={() => navigation.navigate('DeliveryOverview')}
+      >
+        <Text style={[styles.buttonText, { color: '#fff' }]}>View Delivery Overview</Text>
       </TouchableOpacity>
     </View>
   );

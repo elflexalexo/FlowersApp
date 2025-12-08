@@ -1,3 +1,24 @@
+export const cancelSubscription = async (id: number, token: string) => {
+  const res = await axios.delete(`${API_URL}/subscriptions/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
+
+export const pauseOrSkipSubscription = async (id: number, nextDelivery: string, token: string) => {
+  const res = await axios.patch(
+    `${API_URL}/subscriptions/${id}/pause`,
+    { nextDelivery },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res.data;
+};
 export const updateSubscription = async (id: number, payload: any, token: string) => {
   const res = await axios.put(`${API_URL}/subscriptions/${id}`, payload, {
     headers: {

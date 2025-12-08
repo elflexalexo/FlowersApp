@@ -5,6 +5,8 @@ import { SupabaseService } from './services/supabase.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // Debug: Print JWT secret for troubleshooting
+  console.log('JWT_SECRET:', process.env.JWT_SECRET);
   
   // Enable validation
   app.useGlobalPipes(new ValidationPipe({
