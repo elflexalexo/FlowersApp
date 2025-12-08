@@ -127,6 +127,11 @@ export const Navigation = () => {
             options={{ title: 'Profile' }}
           />
           <Stack.Screen
+            name="EditSubscriptionScreen"
+            component={require('../screens/EditSubscriptionScreen').default}
+            options={{ title: 'Edit Subscription' }}
+          />
+          <Stack.Screen
             name="ChangePassword"
             component={ChangePasswordScreen}
             options={{ title: 'Change Password' }}

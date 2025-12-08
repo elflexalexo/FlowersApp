@@ -31,6 +31,16 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], AddressDto.prototype, "note", void 0);
+class DeliveryTimeDto {
+}
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], DeliveryTimeDto.prototype, "from", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], DeliveryTimeDto.prototype, "to", void 0);
 class CreateSubscriptionDto {
 }
 exports.CreateSubscriptionDto = CreateSubscriptionDto;
@@ -48,7 +58,22 @@ __decorate([
     __metadata("design:type", AddressDto)
 ], CreateSubscriptionDto.prototype, "address", void 0);
 __decorate([
-    (0, class_validator_1.IsIn)(['Wednesday', 'Friday']),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateSubscriptionDto.prototype, "deliveryDay", void 0);
+], CreateSubscriptionDto.prototype, "recipientName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSubscriptionDto.prototype, "phone", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ArrayNotEmpty)(),
+    (0, class_validator_1.IsIn)(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], { each: true }),
+    __metadata("design:type", Array)
+], CreateSubscriptionDto.prototype, "deliveryDays", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => DeliveryTimeDto),
+    __metadata("design:type", DeliveryTimeDto)
+], CreateSubscriptionDto.prototype, "deliveryTime", void 0);
 //# sourceMappingURL=create-subscription.dto.js.map

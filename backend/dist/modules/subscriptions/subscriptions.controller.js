@@ -14,26 +14,33 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionsController = void 0;
 const common_1 = require("@nestjs/common");
+const common_2 = require("@nestjs/common");
+const jwt_guard_1 = require("../auth/guards/jwt.guard");
 const subscriptions_service_1 = require("./subscriptions.service");
 const create_subscription_dto_1 = require("./dto/create-subscription.dto");
 let SubscriptionsController = class SubscriptionsController {
     constructor(subscriptionsService) {
         this.subscriptionsService = subscriptionsService;
     }
-    async create(dto) {
-        return this.subscriptionsService.create(dto);
+    async create(dto, req) {
+        // Attach userId to the subscription
+        return this.subscriptionsService.create({ ...dto, userId: req.user.id });
     }
     async findAll(req) {
-        // TODO: Use req.user.id when auth is wired up
-        return this.subscriptionsService.findAllForUser(1);
+        return this.subscriptionsService.findAllForUser(req.user.id);
+    }
+    async update(id, dto, req) {
+        // Only allow update if user owns the subscription
+        return this.subscriptionsService.update(id, { ...dto, userId: req.user.id });
     }
 };
 exports.SubscriptionsController = SubscriptionsController;
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_subscription_dto_1.CreateSubscriptionDto]),
+    __metadata("design:paramtypes", [create_subscription_dto_1.CreateSubscriptionDto, Object]),
     __metadata("design:returntype", Promise)
 ], SubscriptionsController.prototype, "create", null);
 __decorate([
@@ -43,8 +50,18 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SubscriptionsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, create_subscription_dto_1.CreateSubscriptionDto, Object]),
+    __metadata("design:returntype", Promise)
+], SubscriptionsController.prototype, "update", null);
 exports.SubscriptionsController = SubscriptionsController = __decorate([
     (0, common_1.Controller)('subscriptions'),
+    (0, common_2.UseGuards)(jwt_guard_1.JwtGuard),
     __metadata("design:paramtypes", [subscriptions_service_1.SubscriptionsService])
 ], SubscriptionsController);
 //# sourceMappingURL=subscriptions.controller.js.map

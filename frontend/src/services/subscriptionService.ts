@@ -1,3 +1,11 @@
+export const updateSubscription = async (id: number, payload: any, token: string) => {
+  const res = await axios.put(`${API_URL}/subscriptions/${id}`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
 import axios from 'axios';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;

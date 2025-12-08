@@ -4,11 +4,18 @@ declare class AddressDto {
     zip: string;
     note?: string;
 }
+declare class DeliveryTimeDto {
+    from: string;
+    to: string;
+}
 export declare class CreateSubscriptionDto {
     boxCount: number;
     planPrice: number;
     address: AddressDto;
-    deliveryDay: 'Wednesday' | 'Friday';
+    recipientName: string;
+    phone: string;
+    deliveryDays: string[];
+    deliveryTime: DeliveryTimeDto;
 }
 export {};
 //# sourceMappingURL=create-subscription.dto.d.ts.map

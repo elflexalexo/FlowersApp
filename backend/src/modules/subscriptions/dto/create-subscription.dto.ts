@@ -1,4 +1,4 @@
-import { IsNumber, IsObject, IsString, IsOptional, IsIn, ValidateNested } from 'class-validator';
+import { IsNumber, IsObject, IsString, IsOptional, IsIn, ValidateNested, IsArray, ArrayNotEmpty, IsDefined } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class AddressDto {
@@ -16,6 +16,14 @@ class AddressDto {
   note?: string;
 }
 
+class DeliveryTimeDto {
+  @IsString()
+  from: string;
+
+  @IsString()
+  to: string;
+}
+
 export class CreateSubscriptionDto {
   @IsNumber()
   boxCount: number;
@@ -27,6 +35,18 @@ export class CreateSubscriptionDto {
   @Type(() => AddressDto)
   address: AddressDto;
 
-  @IsIn(['Wednesday', 'Friday'])
-  deliveryDay: 'Wednesday' | 'Friday';
+  @IsString()
+  recipientName: string;
+
+  @IsString()
+  phone: string;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsIn(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], { each: true })
+  deliveryDays: string[];
+
+  @ValidateNested()
+  @Type(() => DeliveryTimeDto)
+  deliveryTime: DeliveryTimeDto;
 }

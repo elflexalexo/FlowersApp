@@ -26,12 +26,19 @@ export const SubscriptionsListScreen = ({ navigation }: any) => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>Plan: {item.boxCount} boxes/month</Text>
-              <Text>Price: ${item.planPrice}</Text>
-              <Text>Address: {item.address.street}, {item.address.city}, {item.address.zip}</Text>
-              <Text>Delivery Day: {item.deliveryDay}</Text>
-              <Text>Status: {item.status}</Text>
-              <Text>Next Delivery: {item.nextDelivery}</Text>
+              <Text style={styles.cardTitle}>🌸 {item.boxCount} box{item.boxCount > 1 ? 'es' : ''}/month</Text>
+              <Text style={styles.price}>Price: <Text style={{color:'#ff6b9d', fontWeight:'bold'}}>{item.planPrice} Kč</Text></Text>
+              <Text style={styles.address}><Text style={{fontWeight:'bold'}}>Address:</Text> {item.address.street}, {item.address.city}, {item.address.zip}</Text>
+              {item.recipientName && <Text style={styles.recipient}><Text style={{fontWeight:'bold'}}>Recipient:</Text> {item.recipientName}</Text>}
+              <Text style={styles.delivery}><Text style={{fontWeight:'bold'}}>Delivery:</Text> {item.deliveryDays ? item.deliveryDays.join(', ') : item.deliveryDay} {item.deliveryTime ? `(${item.deliveryTime.from}–${item.deliveryTime.to})` : ''}</Text>
+              <Text style={styles.status}><Text style={{fontWeight:'bold'}}>Status:</Text> {item.status}</Text>
+              <Text style={styles.nextDelivery}><Text style={{fontWeight:'bold'}}>Next Delivery:</Text> {item.nextDelivery}</Text>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => navigation.navigate('EditSubscriptionScreen', { subscription: item })}
+              >
+                <Text style={styles.editButtonText}>Edit</Text>
+              </TouchableOpacity>
             </View>
           )}
         />
@@ -89,8 +96,33 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 6,
+    color: '#ff6b9d',
+  },
+  price: {
+    fontSize: 16,
     marginBottom: 4,
+  },
+  address: {
+    fontSize: 15,
+    marginBottom: 2,
+  },
+  recipient: {
+    fontSize: 15,
+    marginBottom: 2,
+  },
+  delivery: {
+    fontSize: 15,
+    marginBottom: 2,
+  },
+  status: {
+    fontSize: 15,
+    marginBottom: 2,
+  },
+  nextDelivery: {
+    fontSize: 15,
+    marginBottom: 2,
   },
 });
