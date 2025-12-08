@@ -14,6 +14,7 @@ import { SubscriptionsListScreen } from '../screens/SubscriptionsListScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import HeaderMenu from '../components/HeaderMenu';
+import SubscriptionStack from './SubscriptionStack';
 
 const Stack = createNativeStackNavigator();
 
@@ -114,6 +115,11 @@ export const Navigation = () => {
               title: 'My Subscriptions',
               headerRight: () => <HeaderMenu navigation={navigation} />,
             })}
+          />
+          <Stack.Screen
+            name="SubscriptionWizard"
+            component={SubscriptionStack}
+            options={{ title: 'New Subscription', headerShown: false }}
           />
           <Stack.Screen
             name="Profile"

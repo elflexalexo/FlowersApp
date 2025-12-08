@@ -13,6 +13,8 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const auth_module_1 = require("./modules/auth/auth.module");
 const supabase_service_1 = require("./services/supabase.service");
+const subscriptions_controller_1 = require("./modules/subscriptions/subscriptions.controller");
+const subscriptions_service_1 = require("./modules/subscriptions/subscriptions.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -25,8 +27,8 @@ exports.AppModule = AppModule = __decorate([
             }),
             auth_module_1.AuthModule,
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, supabase_service_1.SupabaseService],
+        controllers: [app_controller_1.AppController, subscriptions_controller_1.SubscriptionsController],
+        providers: [app_service_1.AppService, supabase_service_1.SupabaseService, subscriptions_service_1.SubscriptionsService],
         exports: [supabase_service_1.SupabaseService],
     })
 ], AppModule);

@@ -17,7 +17,10 @@ export default function HeaderMenu({ navigation }: { navigation: any }) {
       { text: 'Cancel', style: 'cancel' },
       { text: 'Logout', style: 'destructive', onPress: () => {
         logout();
-        navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+        // Ensure isAuthenticated is false so navigator switches to Auth stack
+        setTimeout(() => {
+          navigation.navigate('Login');
+        }, 100);
       } }
     ]);
   };
