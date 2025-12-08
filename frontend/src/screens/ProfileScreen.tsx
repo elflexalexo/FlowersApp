@@ -14,7 +14,9 @@ export const ProfileScreen = ({ navigation }: any) => {
   const handleLogout = async () => {
     await authService.logout();
     logout();
-    navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+    setTimeout(() => {
+      navigation.navigate('Login');
+    }, 100);
   };
 
   const [saving, setSaving] = useState(false);

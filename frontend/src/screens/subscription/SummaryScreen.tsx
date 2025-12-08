@@ -3,37 +3,45 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { useSubscriptionFlow } from '../../stores/useSubscriptionFlow';
 import { useAuthStore } from '../../store/authStore';
 import { createSubscription } from '../../services/subscriptionService';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function SummaryScreen({ navigation }: any) {
   const { boxCount, planPrice, address, deliveryDay, reset } = useSubscriptionFlow();
   const token = useAuthStore((s) => s.token);
+  const queryClient = useQueryClient();
 
-    const handleConfirm = async () => {
-      const payload = { boxCount, planPrice, address, deliveryDay };
-      // Validate payload
-      if (
-        typeof payload.boxCount !== 'number' ||
-        typeof payload.planPrice !== 'number' ||
-        !payload.address ||
-        typeof payload.address.street !== 'string' ||
-        typeof payload.address.city !== 'string' ||
-        typeof payload.address.zip !== 'string' ||
-        !['Wednesday', 'Friday'].includes(payload.deliveryDay)
-      ) {
-        console.log('❌ Invalid payload:', payload);
-        alert('Please fill out all fields correctly before confirming.');
-        return;
-      }
-      console.log('📦 Submitting payload:', payload);
-      try {
-        await createSubscription(payload, token!);
-        reset();
-        navigation.navigate('SubscriptionsList'); // Navigate to the main subscriptions list
-      } catch (error) {
-        console.log('❌ Subscription creation error:', error);
-        alert('Subscription creation failed. Please check your details and try again.');
-      }
-    };
+  const handleConfirm = async () => {
+    const payload = { boxCount, planPrice, address, deliveryDay };
+    // Validate payload
+    if (
+      typeof payload.boxCount !== 'number' ||
+      typeof payload.planPrice !== 'number' ||
+      !payload.address ||
+      typeof payload.address.street !== 'string' ||
+      typeof payload.address.city !== 'string' ||
+      typeof payload.address.zip !== 'string' ||
+      !payload.deliveryDay ||
+      !['Wednesday', 'Friday'].includes(payload.deliveryDay)
+    ) {
+      console.log('❌ Invalid payload:', payload);
+      alert('Please fill out all fields correctly before confirming.');
+      return;
+    }
+    if (!token) {
+      alert('You are not logged in. Please log in again.');
+      return;
+    }
+    console.log('📦 Submitting payload:', payload);
+    try {
+      await createSubscription(payload, token);
+      reset();
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
+      navigation.navigate('SubscriptionsList'); // Navigate to the main subscriptions list
+    } catch (error) {
+      console.log('❌ Subscription creation error:', error);
+      alert('Subscription creation failed. Please check your details and try again.');
+    }
+  };
 
   return (
     <View style={styles.container}>

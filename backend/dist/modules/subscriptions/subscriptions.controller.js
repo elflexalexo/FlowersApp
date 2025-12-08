@@ -23,6 +23,10 @@ let SubscriptionsController = class SubscriptionsController {
     async create(dto) {
         return this.subscriptionsService.create(dto);
     }
+    async findAll(req) {
+        // TODO: Use req.user.id when auth is wired up
+        return this.subscriptionsService.findAllForUser(1);
+    }
 };
 exports.SubscriptionsController = SubscriptionsController;
 __decorate([
@@ -32,6 +36,13 @@ __decorate([
     __metadata("design:paramtypes", [create_subscription_dto_1.CreateSubscriptionDto]),
     __metadata("design:returntype", Promise)
 ], SubscriptionsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SubscriptionsController.prototype, "findAll", null);
 exports.SubscriptionsController = SubscriptionsController = __decorate([
     (0, common_1.Controller)('subscriptions'),
     __metadata("design:paramtypes", [subscriptions_service_1.SubscriptionsService])

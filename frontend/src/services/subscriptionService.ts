@@ -10,3 +10,12 @@ export const createSubscription = async (payload: any, token: string) => {
   });
   return res.data;
 };
+
+export const getSubscriptions = async (token: string) => {
+  const res = await axios.get(`${API_URL}/subscriptions`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
